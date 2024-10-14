@@ -9,3 +9,13 @@ function isPalindrome(string){
   return reverseString === normalString;
 }
 isPalindrome();
+
+function isMeetingDuringWork(startDay, endDay, startMeeting, durationMeeting){
+  function timeToMinutes(timeStr){
+    const [hours, mitutes] = timeStr.Split(':').Map(Number);
+    return hours * 60 + mitutes;
+  }
+  const endMeeting = timeToMinutes(startMeeting) + durationMeeting;
+  return timeToMinutes(startDay) <= timeToMinutes(startMeeting) && endMeeting <= timeToMinutes(endDay);
+}
+isMeetingDuringWork();
