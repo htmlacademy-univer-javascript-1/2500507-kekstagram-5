@@ -1,3 +1,4 @@
+import {openBigPicture} from './fillsize.js';
 export function renderingThumbnails(photos){
   const pictureList = document.querySelector('.pictures');
   const pictureFragment = document.createDocumentFragment();
@@ -8,7 +9,9 @@ export function renderingThumbnails(photos){
     img.src = photo.url;
     img.alt = photo.description;
     pictureElement.querySelector('.picture__likes').textContent = photo.likes;
-    pictureElement.querySelector('.picture__comments').textContent = photo.coments.length;
+    pictureElement.querySelector('.picture__comments').textContent = photo.comments.length;
+    //обработчик клика для открытия полноразмерного изображения
+    img.addEventListener('click', () => openBigPicture(photo));
     pictureFragment.append(pictureElement);
   });
   pictureList.append(pictureFragment);
