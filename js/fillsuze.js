@@ -1,19 +1,33 @@
 const bigPictureElement = document.querySelector('.big-picture');
 const bodyElement = document.body;
-const renderingBigPicture = ({url, likes, comments, description}) => {
-  bigPictureElement.querySelector('.big-picture__img').src = url;
-  bigPictureElement.querySelector('.likes-count').textContent = likes;
-  bigPictureElement.querySelector('.comments-count').textContent = comments.length;
-  bigPictureElement.querySelector('.social__caption').textContent = description;
-
+const bigPictureImg = bigPictureElement.querySelector('.big-picture__img');
+const likesCount = bigPictureElement.querySelector('.likes-count');
+const commentsCount = bigPictureElement.querySelector('.comments-count');
+const socialCaption = bigPictureElement.querySelector('.social__caption');
+const closeBigPicture = () => {
+  bigPictureElement.classList.add('hidden');
+  bodyElement.classList.remove('modal-open');
+};
+const onEscKeyPress = (evt) => {
+  if (evt.key === 'Escape') {
+    evt.preventDefault();
+    closeBigPicture();
+    document.removeEventListener('keydown', onEscKeyPress);
+  }
+};
+const openBigPicture = (photo) => {
+  bigPictureImg.src = photo.url;
+  likesCount.textContent = photo.likes;
+  commentsCount.textContent = photo.comments.length;
+  socialCaption.textContent = photo.description;
   // Обновление комментариев
   const commentsContainer = bigPictureElement.querySelector('.social__comments');
   commentsContainer.innerHTML = '';
-  comments.forEach(({avatar, name, message }) => {
+  photo.comments.forEach((comment) => {
     const commentElement = document.createElement('li');
-    commentElement.className = 'social__picture';
-    commentElement.innerHTML = `<img class="social__picture" src="${avatar}" alt="${name}" width="35" height="35">
-            <p class="social__text">${message}</p>`;
+    commentElement.classList.add('social__comment');
+    commentElement.innerHTML = `<img class="social__picture" src="${comment.avatar}" alt="${comment.name}" width="35" height="35">
+            <p class="social__text">${comment.message}</p>`;
     commentsContainer.append(commentElement);
   });
   // Открыть окно
@@ -22,19 +36,8 @@ const renderingBigPicture = ({url, likes, comments, description}) => {
   // Скрываем дополнительные элементы
   bigPictureElement.querySelector('.social__comment-count').classList.add('hidden');
   bigPictureElement.querySelector('.comments-loader').classList.add('hidden');
+  // Закрытие окна по клику и Esc
+  document.addEventListener('keydown', onEscKeyPress);
+  bigPictureElement.querySelector('.big-picture__cancel').addEventListener('click', closeBigPicture);
 };
-// Функция для закрытия окна
-const closeBigPicture = () =>{
-  bigPictureElement.classList.add('hidden');
-  bodyElement.classList.remove('modal-open');
-};
-// Обработчики событий
-bigPictureElement.querySelector('.big-picture__cancel').addEventListener('click', closeBigPicture);
-document.addEventListener('keydown', (evt) => {
-  if (evt.key === 'Escape') {
-    closeBigPicture();
-  }
-});
-export const openBigPicture = (photo) => {
-  renderingBigPicture(photo);
-};
+export{ openBigPicture };
