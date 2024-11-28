@@ -44,7 +44,7 @@ function generateComments(){
   }
   return coments;
 }
-function generatePhotos(){
+export function generatePhotos(){
   const photos = [];
   for(let i = 1; i <= 25;i++){
     photos.push({
@@ -57,4 +57,3 @@ function generatePhotos(){
   }
   return photos;
 }
-export {generatePhotos};
