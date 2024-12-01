@@ -33,7 +33,7 @@ const closeForm = () => {
 };
 
 // Разделение хэштегов
-const splitHashtags = (inputString) => inputString.trim().split(/\s+/).filter(Boolean);
+const splitHashtags = (inputString) => inputString.trim().split(' ').filter((tag) => Boolean(tag.length));
 // Проверка фокуса на полях ввода
 const isInFocus = () => document.activeElement === hashtagInput || document.activeElement === descriptionInput;
 // Валидация количества хэштегов

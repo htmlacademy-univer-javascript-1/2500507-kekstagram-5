@@ -31,7 +31,7 @@ const DESCRIPTIONS = [
   'Минимальные детали, обыденное счастье.',
   'Неожиданная красота вокруг нас.',
 ];
-function generateComments(){
+const generateComments = () =>{
   const comentCount = getRandomInteger(0,30);
   const coments = [];
   for (let i = 0; i < comentCount; i++){
@@ -43,8 +43,8 @@ function generateComments(){
     });
   }
   return coments;
-}
-export function generatePhotos(){
+};
+export const generatePhotos = () =>{
   const photos = [];
   for(let i = 1; i <= 25;i++){
     photos.push({
@@ -56,4 +56,4 @@ export function generatePhotos(){
     });
   }
   return photos;
-}
+};
