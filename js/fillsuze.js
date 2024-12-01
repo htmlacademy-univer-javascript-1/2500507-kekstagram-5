@@ -53,7 +53,7 @@ const onLoadMoreCommentsClick = () => {
   displayCommentsCount += COMMENTS_STEP;
   displayComments();
 };
-const openBigPicture = (photo) => {
+export const openBigPicture = (photo) => {
   bigPictureImg.src = photo.url;
   likesCount.textContent = photo.likes;
   commentsCount.textContent = photo.comments.length;
@@ -69,4 +69,3 @@ const openBigPicture = (photo) => {
   bigPictureElement.querySelector('.big-picture__cancel').addEventListener('click', closeBigPicture);
   loadCommentsButton.addEventListener('click', onLoadMoreCommentsClick);
 };
-export{ openBigPicture };
