@@ -1,4 +1,15 @@
-import {openBigPicture} from './fillsize.js';
+import { openBigPicture } from './fillsuze.js';
+const getPictureClick = (photos) => (evt) => {
+  const pictureElement = evt.target.closest('.picture');
+  if (pictureElement) {
+    const currentPicture = photos.find((photo) =>
+      photo.url === pictureElement.querySelector('.picture__img').getAttribute('src')
+    );
+    if (currentPicture) {
+      openBigPicture(currentPicture);
+    }
+  }
+};
 export function renderingThumbnails(photos){
   const pictureList = document.querySelector('.pictures');
   const pictureFragment = document.createDocumentFragment();
@@ -10,9 +21,7 @@ export function renderingThumbnails(photos){
     img.alt = photo.description;
     pictureElement.querySelector('.picture__likes').textContent = photo.likes;
     pictureElement.querySelector('.picture__comments').textContent = photo.comments.length;
-    //обработчик клика для открытия полноразмерного изображения
-    img.addEventListener('click', () => openBigPicture(photo));
-    pictureFragment.append(pictureElement);
   });
   pictureList.append(pictureFragment);
+  pictureList.addEventListener('click', getPictureClick(photos));
 }

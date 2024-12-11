@@ -1,4 +1,6 @@
-import { initEffectSlider, updateEffect } from './effects.js';
+import { initEffectSlider, updateEffect } from './imageEffects.js';
+import { isEscape } from './until.js';
+import { sendData } from './api.js';
 const MAX_HASHTAGS = 5;
 const HASHTAG_REGEX = /^#[A-Za-z0-9а-яё]{1,19}$/i;
 
@@ -55,7 +57,7 @@ const validateUniqueHashtags = (value) => {
 
 // Обработка нажатия клавиш
 function handleKeydown(event) {
-  if (event.key === 'Escape' && !isInFocus()) {
+  if (isEscape(event) && !isInFocus()) {
     event.preventDefault();
     closeForm();
   }
@@ -80,7 +82,7 @@ uploadForm.querySelector('.img-upload__cancel').addEventListener('click', closeF
 
 // Блокировка Esc при фокусе
 document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && isInFocus()) {
+  if (isEscape(event) && isInFocus()) {
     event.stopPropagation();
   }
 });
@@ -96,3 +98,56 @@ effectRadios.forEach((radio) => {
     updateEffect(selectedEffect);
   });
 });
+// Валидация хэштегов и описания
+const validateForm = () => {
+  const isValid = pristineValidator.validate();
+  return isValid;
+};
+
+// Блокировка и разблокировка кнопки отправки
+const blockSubmitButton = () => {
+  const submitButton = uploadForm.querySelector('.img-upload__submit');
+  submitButton.disabled = true;
+};
+
+const unblockSubmitButton = () => {
+  const submitButton = uploadForm.querySelector('.img-upload__submit');
+  submitButton.disabled = false;
+};
+
+// Отображение сообщения об успехе
+const showSuccessMessage = () => {
+  // Реализуйте функцию показа сообщения об успехе
+};
+
+// Отображение сообщения об ошибке
+const showErrorMessage = () => {
+  // Реализуйте функцию показа сообщения об ошибке
+};
+
+const setUserFormSubmit = (onSuccess) => {
+  uploadForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+
+    if (validateForm()) {
+      blockSubmitButton();
+      sendData(new FormData(evt.target))
+        .then(() => {
+          showSuccessMessage();
+          onSuccess();
+        })
+        .catch(() => {
+          showErrorMessage();
+        })
+        .finally(unblockSubmitButton);
+    }
+  });
+};
+
+// Ваши другие обработчики, такие как закрытие формы, валидация
+uploadForm.querySelector('.img-upload__cancel').addEventListener('click', () => {
+  // Код для закрытия формы
+});
+
+// Экспорт функции
+export { setUserFormSubmit, closeForm };
