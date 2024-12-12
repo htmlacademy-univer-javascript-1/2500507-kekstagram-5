@@ -1,4 +1,3 @@
-import noUiSlider from 'nouislider';
 const previewImage = document.querySelector('.img-upload__preview img');
 const effectLevelValue = document.querySelector('.effect-level__value');
 const effectSliderContainer = document.querySelector('.effect-level__slider');
