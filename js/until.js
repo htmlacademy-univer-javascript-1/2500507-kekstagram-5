@@ -26,5 +26,11 @@ const showingAlert = (message) => {
     alert.remove();
   }, ALERT_SHOW_TIME);
 };
-
-export{getRandomInteger, isEscape, showingAlert};
+function debounce (callback, timeoutDelay = 500) {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+}
+export{getRandomInteger, isEscape, showingAlert, debounce};
