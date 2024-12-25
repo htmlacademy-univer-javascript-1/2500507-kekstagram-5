@@ -1,103 +1,142 @@
-const previewImage = document.querySelector('.img-upload__preview img');
-const effectLevelValue = document.querySelector('.effect-level__value');
-const effectSliderContainer = document.querySelector('.effect-level__slider');
-
-// Применение фильтров к изображению
-export function applyImageFilters() {
-  const effectValue = effectLevelValue.value;
-  const currentEffect = document.querySelector('input[name="effect"]:checked').value;
-
-  // Используем фильтры в зависимости от выбранного эффекта
-  let filter;
-  switch (currentEffect) {
-    case 'chrome':
-      filter = `grayscale(${effectValue})`;
-      break;
-    case 'sepia':
-      filter = `sepia(${effectValue})`;
-      break;
-    case 'marvin':
-      filter = `invert(${effectValue}%)`;
-      break;
-    case 'phobos':
-      filter = `blur(${effectValue}px)`;
-      break;
-    case 'heat':
-      filter = `brightness(${1 + effectValue})`;
-      break;
-    default:
-      filter = 'none';
-  }
-  previewImage.style.filter = filter;
-}
-
-// Сброс фильтров
-export function resetImageFilters() {
-  previewImage.style.filter = 'none';
-  effectLevelValue.value = '';
-}
-
-// Инициализация эффекта
-export function initEffectSlider() {
-  if (effectSliderContainer) {
-    noUiSlider.create(effectSliderContainer, {
-      start: 100,
-      range: {
-        min: 0,
-        max: 100
-      },
+const Effect = {
+  DEFAULT: 'none',
+  CHROME: 'chrome',
+  SEPIA: 'sepia',
+  MARVIN: 'marvin',
+  PHOBOS: 'phobos',
+  HEAT: 'heat'
+};
+const effectProperties = {
+  [Effect.CHROME]: {
+    filter: 'grayscale',
+    unit: '',
+    slider: {
+      min: 0,
+      max: 1,
+      step: 0.1
+    }
+  },
+  [Effect.SEPIA]: {
+    filter: 'sepia',
+    unit: '',
+    slider: {
+      min: 0,
+      max: 1,
+      step: 0.1
+    }
+  },
+  [Effect.MARVIN]: {
+    filter: 'invert',
+    unit: '%',
+    slider: {
+      min: 0,
+      max: 100,
       step: 1
-    });
-
-    effectSliderContainer.noUiSlider.on('update', (values) => {
-      effectLevelValue.value = values[0];
-      applyImageFilters(); // Применяем фильтры с актуальными значениями при изменении слайдера
-    });
+    }
+  },
+  [Effect.PHOBOS]: {
+    filter: 'blur',
+    unit: 'px',
+    slider: {
+      min: 0,
+      max: 3,
+      step: 0.1
+    }
+  },
+  [Effect.HEAT]: {
+    filter: 'brightness',
+    unit: '',
+    slider: {
+      min: 1,
+      max: 3,
+      step: 0.1
+    }
+  },
+  [Effect.DEFAULT]: {
+    filter: null,
+    unit: ''
   }
+};
 
-  // Инициализация при загрузке страницы
-  document.querySelectorAll('.effects__radio').forEach((radio) => {
-    radio.addEventListener('change', () => {
-      const selectedEffect = radio.value;
-
-      // Вызываем функцию обновления эффекта
-      updateEffect(selectedEffect);
-    });
+const modalElement = document.querySelector('.img-upload');
+const previewImage = modalElement.querySelector('.img-upload__preview img');
+const effectLevelValue = modalElement.querySelector('.effect-level__value');
+const effectSliderContainer = modalElement.querySelector('.effect-level__slider');
+const sliderContainerElement = modalElement.querySelector('.img-upload__effect-level');
+const buttonZoomSmall = document.querySelector('.scale__control--smaller');
+const buttonZoomBig = document.querySelector('.scale__control--bigger');
+const scaleControlValue = modalElement.querySelector('.scale__control--value');
+const ZOOM_STEP = 25;
+const MIN_ZOOM_LEVEL = 25;
+const MAX_ZOOM_LEVEL = 100;
+const FULL_PERCENTAGE = 100;
+let chosenEffect = Effect.DEFAULT;
+const updateStyle = () => {
+  const { filter, unit } = effectProperties[chosenEffect];
+  previewImage.style.filter = chosenEffect === Effect.DEFAULT ? null : `${filter}(${effectLevelValue.value}${unit})`;
+};
+const sliderEventHandler = () => {
+  effectLevelValue.value = effectSliderContainer.noUiSlider.get();
+  updateStyle();
+};
+const initializeSlider = ({min, max, step}) => {
+  noUiSlider.create(effectSliderContainer, {
+    range: {min, max},
+    step,
+    start: max,
+    connect: 'lower'
   });
-}
-
-// Обновление уровня эффекта
-export function updateEffect(effect) {
-  resetImageFilters(); // Сбрасываем фильтры и параметры слайдера
-
-  if (effect === 'none') {
-    effectSliderContainer.style.display = 'none';
+  effectSliderContainer.noUiSlider.on('update', sliderEventHandler);
+};
+const configureSlider = () => {
+  if (chosenEffect !== Effect.DEFAULT) {
+    const { slider } = effectProperties[chosenEffect];
+    if (effectSliderContainer.noUiSlider) {
+      effectSliderContainer.noUiSlider.destroy();
+    }
+    initializeSlider(slider);
+    sliderContainerElement.classList.remove('hidden');
   } else {
-    effectSliderContainer.style.display = 'block';
-    effectSliderContainer.noUiSlider.set(100); // Сбрасываем на максимум для нового эффекта
+    effectSliderContainer.noUiSlider?.destroy();
+    sliderContainerElement.classList.add('hidden');
   }
+  updateStyle();
+};
+const applyEffect = (effect) => {
+  chosenEffect = effect;
+  configureSlider();
+};
+const reset = () => {
+  applyEffect(Effect.DEFAULT);
+};
+const onEffectsChange = (evt) => {
+  applyEffect(evt.target.value);
+};
 
-  // Обновляем параметры слайдера в зависимости от эффекта
-  let range;
-  switch (effect) {
-    case 'chrome':
-    case 'sepia':
-      range = { min: 0, max: 1 };
-      break;
-    case 'marvin':
-      range = { min: 0, max: 100 };
-      break;
-    case 'phobos':
-      range = { min: 0, max: 3 };
-      break;
-    case 'heat':
-      range = { min: 1, max: 3 };
-      break;
+const changeZoomImage = (increment) => {
+  let currentScaleValue = parseInt(scaleControlValue.value, 10);
+  if ((increment && currentScaleValue < MAX_ZOOM_LEVEL) || (!increment && currentScaleValue > MIN_ZOOM_LEVEL)) {
+    currentScaleValue += increment ? ZOOM_STEP : -ZOOM_STEP;
+    scaleControlValue.value = `${currentScaleValue.toString()}%`;
+    previewImage.style.transform = `scale(${currentScaleValue / FULL_PERCENTAGE})`;
   }
+};
 
-  // Изменяем параметры слайдера
-  effectSliderContainer.noUiSlider.updateOptions({
-    range: range,
-    start: range.max // устанавливаем на максимум при обновлении
-  });
-}
+const addEventListenerToScaleElemets = () => {
+  buttonZoomSmall.addEventListener('click', () => changeZoomImage(false));
+  buttonZoomBig.addEventListener('click', () => changeZoomImage(true));
+};
+
+const removeEventListenerFromScaleElemets = () => {
+  buttonZoomSmall.removeEventListener('click', () => changeZoomImage(false));
+  buttonZoomBig.removeEventListener('click', () => changeZoomImage(true));
+};
+const init = () => {
+  configureSlider();
+  modalElement.querySelector('.effects').addEventListener('change', onEffectsChange);
+  addEventListenerToScaleElemets();
+};
+
+export {addEventListenerToScaleElemets, removeEventListenerFromScaleElemets, init, reset };
+
+

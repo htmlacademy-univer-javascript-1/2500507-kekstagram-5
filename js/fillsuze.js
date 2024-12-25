@@ -41,6 +41,7 @@ const updatePhoto = () => {
   bigPictureLikesCount.textContent = currentPhoto.likes;
   socialCaptionElement.textContent = currentPhoto.description;
   clearComments();
+  currentCommentIndex = 0;
   displayComments();
 };
 const onKeyDown = (evt) => {
