@@ -21,6 +21,7 @@ export function renderingThumbnails(photos){
     img.alt = photo.description;
     pictureElement.querySelector('.picture__likes').textContent = photo.likes;
     pictureElement.querySelector('.picture__comments').textContent = photo.comments.length;
+    pictureFragment.append(pictureElement);
   });
   pictureList.append(pictureFragment);
   pictureList.addEventListener('click', getPictureClick(photos));
