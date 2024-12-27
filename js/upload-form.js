@@ -67,6 +67,7 @@ function handleKeydown(evt) {
   }
 }
 
+
 const onCloseFormCancel = () => resetFormAndCloseModal();
 const parseHashtagString = (tagString) => tagString.trim().split(/\s+/).filter((tag) => tag.length > 0);
 
@@ -82,6 +83,7 @@ const validateCorrectHashtag = (value) => {
   const { isValidCount, isValidTags, isUniqueTags } = validateHashtags(value);
   return isValidCount && isValidTags && isUniqueTags;
 };
+
 
 const validateComment = (value) => value.length <= MAX_COMMENT_LENGTH;
 
@@ -126,6 +128,7 @@ const onSetupUserFormSubmit = (onSuccess) => {
 };
 
 pristineValidator.addValidator(hashtagInput, validateCorrectHashtag, validateHashtagInput);
+
 pristineValidator.addValidator(descriptionInput, validateComment, formErrors.COMMENT_TOO_LONG);
 uploadForm.addEventListener('change', onSetupImagePreview);
 uploadCancel.addEventListener('click', onCloseFormCancel);
