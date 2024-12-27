@@ -5,7 +5,7 @@ const getRandomInteger = (a, b) => {
   return Math.floor(Math.random() * (upper - lower + 1) + lower);
 };
 const isEscape = (evt) => evt.key === 'Escape';
-const showingAlert = (message) => {
+const showAlert = (message) => {
   const alert = document.createElement('div');
   alert.style.zIndex = '100';
   alert.style.position = 'absolute';
@@ -33,4 +33,4 @@ function debounce (callback, timeoutDelay = 500) {
     timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
   };
 }
-export{getRandomInteger, isEscape, showingAlert, debounce};
+export{getRandomInteger, isEscape, showAlert, debounce};

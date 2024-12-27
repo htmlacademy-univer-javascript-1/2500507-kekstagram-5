@@ -1,6 +1,6 @@
-import { renderingThumbnails } from './pictures.js';
+import { renderThumbnails } from './pictures.js';
 import { getData } from './api.js';
-import { showingAlert, debounce } from './until.js';
+import { showAlert, debounce } from './until.js';
 
 const DEBOUNCE_DELAY = 500;
 const RANDOM_PICTURE_COUNT = 10;
@@ -8,11 +8,10 @@ const ACTIVE_FILTER_CLASS = 'img-filters__button--active';
 const DEFAULT_FILTER_ID = 'filter-default';
 const RANDOM_FILTER_ID = 'filter-random';
 const DISCUSSED_FILTER_ID = 'filter-discussed';
-
 const filterButtons = document.body.querySelectorAll('.img-filters__button');
 let currentFilterId = DEFAULT_FILTER_ID;
 let activeFilterButton = document.getElementById(DEFAULT_FILTER_ID);
-// Функция для получения случайных изображений
+
 const getRandomImages = (imageArray, count) => {
   if (imageArray.length <= count) {
     return imageArray.slice();
@@ -27,7 +26,6 @@ const getRandomImages = (imageArray, count) => {
   }
   return randomImages;
 };
-// Функция для фильтрации изображений
 const filterImages = (images) => {
   switch (currentFilterId) {
     case DEFAULT_FILTER_ID:
@@ -41,14 +39,14 @@ const filterImages = (images) => {
   }
 };
 
-// Функция для обновления списка изображений
+
 const updateImageDisplay = (images) => {
   const filteredImages = filterImages(images);
   document.querySelectorAll('.picture').forEach((pic) => pic.remove());
-  renderingThumbnails(filteredImages);
+  renderThumbnails(filteredImages);
 };
 
-// Обработчик кликов на кнопки фильтров
+
 const filterButtonClickHandler = (callback) => (evt) => {
   currentFilterId = evt.target.id;
   activeFilterButton.classList.remove(ACTIVE_FILTER_CLASS);
@@ -57,12 +55,12 @@ const filterButtonClickHandler = (callback) => (evt) => {
   callback();
 };
 
-// Инициализация
+
 getData()
   .then((images) => {
-    renderingThumbnails(images);
+    renderThumbnails(images);
     document.querySelector('.img-filters').classList.remove('img-filters--inactive');
     const onFilterClick = filterButtonClickHandler(debounce(() => updateImageDisplay(images), DEBOUNCE_DELAY));
     filterButtons.forEach((filterButton) => filterButton.addEventListener('click', onFilterClick));
   })
-  .catch((error) => showingAlert(error.message));
+  .catch((error) => showAlert(error.message));

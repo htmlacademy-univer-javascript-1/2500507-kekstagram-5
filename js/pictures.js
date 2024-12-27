@@ -1,4 +1,4 @@
-import { openBigPicture } from './fillsuze.js';
+import { openBigPicture } from './full-size.js';
 const getPictureClick = (photos) => (evt) => {
   const pictureElement = evt.target.closest('.picture');
   if (pictureElement) {
@@ -10,7 +10,7 @@ const getPictureClick = (photos) => (evt) => {
     }
   }
 };
-export function renderingThumbnails(photos){
+export function renderThumbnails(photos){
   const pictureList = document.querySelector('.pictures');
   const pictureFragment = document.createDocumentFragment();
   photos.forEach((photo) => {
@@ -21,6 +21,7 @@ export function renderingThumbnails(photos){
     img.alt = photo.description;
     pictureElement.querySelector('.picture__likes').textContent = photo.likes;
     pictureElement.querySelector('.picture__comments').textContent = photo.comments.length;
+    pictureFragment.append(pictureElement);
   });
   pictureList.append(pictureFragment);
   pictureList.addEventListener('click', getPictureClick(photos));
