@@ -6,7 +6,7 @@ const imageElement = document.querySelector('.big-picture__img').querySelector('
 const bigPictureLikesCount = document.querySelector('.likes-count');
 const socialCaptionElement = document.querySelector('.social__caption');
 const commentsContainer = document.querySelector('.social__comments');
-const commentTemplate = commentsContainer.querySelector('.social__comment');
+const commentTemplate = document.querySelector('.social__comment');
 const loadCommentsButton = document.querySelector('.comments-loader');
 const commentsCountDisplay = document.querySelector('.social__comment-count');
 let currentPhoto;
