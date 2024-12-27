@@ -1,14 +1,14 @@
-import {renderingThumbnails} from './pictures.js';
+import {renderThumbnails} from './pictures.js';
 import { getData } from './api.js';
-import { showingAlert } from './until.js';
-import { setupUserFormSubmit, resetFormAndCloseModal } from'./upload-form.js';
+import { showAlert } from './until.js';
+import { onSetupUserFormSubmit, resetFormAndCloseModal } from'./upload-form.js';
 import './gallery-filter.js';
 
 getData()
   .then((photos) => {
-    renderingThumbnails(photos);
+    renderThumbnails(photos);
   })
   .catch((error) => {
-    showingAlert(error.message);
+    showAlert(error.message);
   });
-setupUserFormSubmit(resetFormAndCloseModal);
+onSetupUserFormSubmit(resetFormAndCloseModal);

@@ -1,17 +1,19 @@
-import {addEventListenerToScaleElemets, removeEventListenerFromScaleElemets, init, reset} from './imageEffects.js';
+import {addEventListenerToScaleElemets, removeEventListenerFromScaleElemets, init, reset} from './image-effects.js';
 import {isEscape} from './until.js';
 import {sendData} from './api.js';
 import {showError, showSuccess} from './notification.js';
 
 const MAX_HASHTAGS = 5;
 const HASHTAG_REGEX = /^#[a-zа-яё0-9]{1,19}$/i;
-const FORM_ERRORS = {
+const MAX_COMMENT_LENGTH = 140;
+const formErrors = {
   COUNT_EXCEEDED: `Максимальное количество хэш-тегов — ${MAX_HASHTAGS}`,
   UNIQUE_HASTAGS: 'Хэш-теги повторяются',
-  INCORRECT_HASHTAG: 'Некорректный хэш-тег. Хэш-тег начинается #, содержит только буквы и цифры'
+  INCORRECT_HASHTAG: 'Некорректный хэш-тег. Хэш-тег начинается #, содержит только буквы и цифры',
+  COMMENT_TOO_LONG: `Комментарий не может превышать ${MAX_COMMENT_LENGTH} символов.`
 };
 const FILE_TYPES = ['jpg', 'jpeg', 'png'];
-const TEXT_SUBMIT = {
+const textSubmit = {
   IDLE: 'Опубликовать',
   SENDING: 'Публикую...'
 };
@@ -43,7 +45,7 @@ const resetFormAndCloseModal = () => {
 const isValidType = (file) => FILE_TYPES.some((it) => file.name.toLowerCase().endsWith(it));
 const isInFocus = () => document.activeElement === hashtagInput || document.activeElement === descriptionInput;
 
-const setupImagePreview = () => {
+const onSetupImagePreview = () => {
   const file = uploadInput.files[0];
   if (file && isValidType(file)) {
     uploadPreview.src = URL.createObjectURL(file);
@@ -65,7 +67,8 @@ function handleKeydown(evt) {
   }
 }
 
-const closeFormOnCancel = () => resetFormAndCloseModal();
+
+const onCloseFormCancel = () => resetFormAndCloseModal();
 const parseHashtagString = (tagString) => tagString.trim().split(/\s+/).filter((tag) => tag.length > 0);
 
 const validateHashtags = (value) => {
@@ -81,30 +84,32 @@ const validateCorrectHashtag = (value) => {
   return isValidCount && isValidTags && isUniqueTags;
 };
 
+
+const validateComment = (value) => value.length <= MAX_COMMENT_LENGTH;
+
 const validateHashtagInput = (value) => {
   const { isValidCount, isValidTags, isUniqueTags } = validateHashtags(value);
   if (!isValidTags) {
-    return FORM_ERRORS.INCORRECT_HASHTAG;
+    return formErrors.INCORRECT_HASHTAG;
   } else if (!isUniqueTags) {
-    return FORM_ERRORS.UNIQUE_HASTAGS;
+    return formErrors.UNIQUE_HASTAGS;
   } else if (!isValidCount) {
-    return FORM_ERRORS.COUNT_EXCEEDED;
+    return formErrors.COUNT_EXCEEDED;
   }
   return true;
 };
-
 const toggleSubmitButton = (isDisabled, buttonText) => {
   uploadSubmit.disabled = isDisabled;
   uploadSubmit.textContent = buttonText;
 };
 const disableSubmitButton = () => {
-  toggleSubmitButton(true, TEXT_SUBMIT.SENDING);
+  toggleSubmitButton(true, textSubmit.SENDING);
 };
 const enableSubmitButton = () => {
-  toggleSubmitButton(false, TEXT_SUBMIT.IDLE);
+  toggleSubmitButton(false, textSubmit.IDLE);
 };
 
-const setupUserFormSubmit = (onSuccess) => {
+const onSetupUserFormSubmit = (onSuccess) => {
   uploadForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
     if (pristineValidator.validate()) {
@@ -123,6 +128,8 @@ const setupUserFormSubmit = (onSuccess) => {
 };
 
 pristineValidator.addValidator(hashtagInput, validateCorrectHashtag, validateHashtagInput);
-uploadForm.addEventListener('change', setupImagePreview);
-uploadCancel.addEventListener('click', closeFormOnCancel);
-export { setupUserFormSubmit, resetFormAndCloseModal };
+
+pristineValidator.addValidator(descriptionInput, validateComment, formErrors.COMMENT_TOO_LONG);
+uploadForm.addEventListener('change', onSetupImagePreview);
+uploadCancel.addEventListener('click', onCloseFormCancel);
+export { onSetupUserFormSubmit, resetFormAndCloseModal };

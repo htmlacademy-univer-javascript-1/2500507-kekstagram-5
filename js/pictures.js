@@ -1,4 +1,4 @@
-import { openBigPicture } from './fillsuze.js';
+import { openBigPicture } from './full-size.js';
 const getPictureClick = (photos) => (evt) => {
   const pictureElement = evt.target.closest('.picture');
   if (pictureElement) {
@@ -10,7 +10,7 @@ const getPictureClick = (photos) => (evt) => {
     }
   }
 };
-export function renderingThumbnails(photos){
+export function renderThumbnails(photos){
   const pictureList = document.querySelector('.pictures');
   const pictureFragment = document.createDocumentFragment();
   photos.forEach((photo) => {

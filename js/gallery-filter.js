@@ -1,6 +1,6 @@
-import { renderingThumbnails } from './pictures.js';
+import { renderThumbnails } from './pictures.js';
 import { getData } from './api.js';
-import { showingAlert, debounce } from './until.js';
+import { showAlert, debounce } from './until.js';
 
 const DEBOUNCE_DELAY = 500;
 const RANDOM_PICTURE_COUNT = 10;
@@ -43,7 +43,7 @@ const filterImages = (images) => {
 const updateImageDisplay = (images) => {
   const filteredImages = filterImages(images);
   document.querySelectorAll('.picture').forEach((pic) => pic.remove());
-  renderingThumbnails(filteredImages);
+  renderThumbnails(filteredImages);
 };
 
 
@@ -58,10 +58,9 @@ const filterButtonClickHandler = (callback) => (evt) => {
 
 getData()
   .then((images) => {
-    renderingThumbnails(images);
+    renderThumbnails(images);
     document.querySelector('.img-filters').classList.remove('img-filters--inactive');
     const onFilterClick = filterButtonClickHandler(debounce(() => updateImageDisplay(images), DEBOUNCE_DELAY));
     filterButtons.forEach((filterButton) => filterButton.addEventListener('click', onFilterClick));
   })
-  .catch((error) => showingAlert(error.message));
-
+  .catch((error) => showAlert(error.message));
